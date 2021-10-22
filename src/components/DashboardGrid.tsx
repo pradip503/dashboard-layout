@@ -5,29 +5,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ErrorIcon from "@mui/icons-material/Error";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
-
-// import fetch from "node-fetch";
 import apis from "../constants/apis.json";
-import { width } from "@material-ui/system";
-import { bottom } from "@popperjs/core";
-
-const response = [
-	{
-		id: 1,
-		title: "Available Services",
-		status: true,
-	},
-	{
-		id: 2,
-		title: "Down Services",
-		status: false,
-	},
-];
 
 const useStyles = makeStyles(() => ({
 	firstBlock: {
-		fontSize: "2rem",
-		fontWeight: "bold",
+		fontSize: "2rem"
 	},
 	box: {
 		padding: "2rem",
@@ -41,9 +23,10 @@ const useStyles = makeStyles(() => ({
 		height: "10rem",
 		padding: "3rem",
 		fontSize: "1.4rem",
+		color: "white"
 	},
 	services: {
-		fontSize: "4rem",
+		fontSize: "3rem",
 		color: "#eee",
 	},
 	statusContainer: {
@@ -58,6 +41,7 @@ const useStyles = makeStyles(() => ({
 		textAlign: "left",
 	},
 	white: {
+		fontSize: "2rem",
 		color: "#eee",
 	},
 	iconContainer: {
@@ -68,28 +52,10 @@ const useStyles = makeStyles(() => ({
 	},
 }));
 
-const currentDateTime = () => {
-	let dateObj = new Date();
-	return (
-		dateObj.getDate() +
-		"/" +
-		(dateObj.getMonth() + 1) +
-		"/" +
-		dateObj.getFullYear() +
-		" @ " +
-		dateObj.getHours() +
-		":" +
-		dateObj.getMinutes() +
-		":" +
-		dateObj.getSeconds()
-	);
-};
-
 export default function DashboardGrid() {
 	const [results, setResults] = useState([] as any);
-	console.log(results);
 	const endPoints = (arr: Array<any>) => {
-		const arrayResponse = arr.map(async (response) => {
+		const arrayResponse = arr.map(async (response, i) => {
 			return {
 				url: apis.map((api, i) => {
 					if (api.id === i + 1) {
@@ -102,7 +68,6 @@ export default function DashboardGrid() {
 		});
 		return Promise.all(arrayResponse);
 	};
-	// let endPoints: Array<any> = [];
 	useEffect(() => {
 		async function fetchAPIResponse(apis: Array<any>) {
 			try {
@@ -126,19 +91,12 @@ export default function DashboardGrid() {
 	});
 	let DashDown: Array<any> = [];
 	DashDown.push({
-		title: "Running Services",
+		title: "Down Services",
 		value: results.filter((upStatus: any) => upStatus.status === "DOWN").length,
 	});
-	// if (DashDown.length === 0) {
-	// 	setDashboardStatus("All Operational");
-	// } else if (DashDown.length > 0 && DashDown.length < results.length) {
-	// 	setDashboardStatus("Partially Down");
-	// } else {
-	// 	setDashboardStatus("All Down");
-	// }
 
 	const firstBlock = () => {
-		if (DashDown.length === 0) {
+		if (DashDown[0].value === 0) {
 			return (
 				<>
 					<Paper className={classes.iconContainer}>
@@ -153,22 +111,7 @@ export default function DashboardGrid() {
 					</Paper>
 				</>
 			);
-		} else if (DashDown.length > 0 && DashDown.length < results.length) {
-			return (
-				<>
-					<Paper className={classes.iconContainer}>
-						<ErrorIcon color={"warning"} sx={{ fontSize: "3rem" }} />
-					</Paper>
-					<Paper
-						className={classes.titleContainer}
-						style={{
-							background: "#ecb857",
-						}}>
-						<span className={classes.firstBlock}>Partially Up</span>
-					</Paper>
-				</>
-			);
-		} else {
+		} else if (DashUp[0].value === 0) {
 			return (
 				<>
 					<Paper className={classes.iconContainer}>
@@ -183,52 +126,89 @@ export default function DashboardGrid() {
 					</Paper>
 				</>
 			);
+		} else {
+			return (
+				<>
+					<Paper className={classes.iconContainer}>
+						<ErrorIcon color={"warning"} sx={{ fontSize: "3rem" }} />
+					</Paper>
+					<Paper
+						className={classes.titleContainer}
+						style={{
+							background: "#ecb857",
+						}}>
+						<span className={classes.firstBlock}>Partially Up</span>
+					</Paper>
+				</>
+			);
 		}
 	};
 	if (results.length !== 0) {
 		return (
 			<Box className={classes.box}>
 				<Grid container spacing={4} className={classes.box}>
-					{/* <Grid item xs={12}>
-					<Paper className={classes.box}>
-						<h1>Latest Status as per {currentDateTime()}</h1>
-					</Paper>
-				</Grid> */}
 					{/* Top Status Bar, */}
 					<Grid item xs={12} md={4} className={classes.statusContainer}>
 						{firstBlock()}
 					</Grid>
-					{response.map((item, i) => (
-						<Grid
-							item
-							xs={12}
-							md={4}
-							className={classes.statusContainer}
-							key={i}>
-							<Paper className={classes.iconContainer}>
-								{i === 0 ? (
-									<CheckCircleIcon
-										color={"success"}
-										sx={{ fontSize: "3rem" }}
-									/>
-								) : (
-									<CancelIcon color={"error"} sx={{ fontSize: "3rem" }} />
-								)}
-							</Paper>
-							<Paper
-								className={classes.titleContainer}
-								style={{
-									background: `${item.status ? "#66bb6a" : "#ef5350"}`,
-									textAlign: "right",
-								}}>
-								<span>{item.title}</span>
-								<br />
-								<span className={classes.services}>
-									{i === 0 ? `${DashUp[0].value}` : `${DashDown[0].value}`}
-								</span>
-							</Paper>
-						</Grid>
-					))}
+
+					{/* Up Grid */}
+					<Grid
+						item
+						xs={12}
+						md={4}
+						className={classes.statusContainer}
+						>
+						<Paper className={classes.iconContainer}>
+							
+								<CheckCircleIcon
+									color={"success"}
+									sx={{ fontSize: "3rem" }}
+								/>
+							
+						</Paper>
+						<Paper
+							className={classes.titleContainer}
+							style={{
+								background: "#66bb6a",
+								textAlign: "right",
+							}}>
+							<span>{DashUp[0].title}</span>
+							<br />
+							<span className={classes.services}>
+								{DashUp[0].value}
+							</span>
+						</Paper>
+					</Grid>
+
+					{/* Down grid */}
+					<Grid
+						item
+						xs={12}
+						md={4}
+						className={classes.statusContainer}
+					>
+						<Paper className={classes.iconContainer}>
+
+							<CancelIcon
+								color={"error"}
+								sx={{ fontSize: "3rem" }}
+							/>
+
+						</Paper>
+						<Paper
+							className={classes.titleContainer}
+							style={{
+								background: "#ef5350",
+								textAlign: "right",
+							}}>
+							<span>{DashDown[0].title}</span>
+							<br />
+							<span className={classes.services}>
+								{DashDown[0].value}
+							</span>
+						</Paper>
+					</Grid>
 				</Grid>
 				<Grid container spacing={3} className={classes.box}>
 					{results.map((result: any, i: any) => (
@@ -243,11 +223,10 @@ export default function DashboardGrid() {
 									className={classes.endpoints}
 									elevation={0}
 									style={{
-										background: `${
-											result.status === "UP" ? "#66bb6a" : "#ef5350"
-										}`,
+										background: `${result.status === "UP" ? "#66bb6a" : "#ef5350"
+											}`,
 									}}>
-									<h1 className={classes.white}>{result.status}</h1>
+									<span className={classes.white}>{result.status}</span>
 								</Paper>
 							</Grid>
 						</>

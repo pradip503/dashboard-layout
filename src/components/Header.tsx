@@ -33,7 +33,7 @@ const Header = () => {
 					{isOpened ? <ChevronLeftIcon /> : <MenuIcon />}
 				</IconButton>
 				<Typography variant='h6' className={classes.title}>
-					Live Api Status,
+					Live Api Status
 				</Typography>
 			</Toolbar>
 		</AppBar>

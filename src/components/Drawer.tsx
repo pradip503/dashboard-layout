@@ -8,7 +8,7 @@ import { useDrawerContext } from "../contexts/drawer-context";
 
 const useStyles = makeStyles((theme: Theme) => ({
 	drawer: {
-		background: "#ede7f6",
+		background: "#42a5f5",
 		position: "static",
 	},
 	closed: {
